@@ -1,0 +1,28 @@
+<div class="card m-2 mt-4">
+    <div class="row g-0 align-items-center">
+        <div class="col-3 card__info">
+            <div class="card__img p-2">
+                <img src="img.jpg" alt="card img" />
+            </div>
+            <div class="card__likes p-2">
+                <input type="number" class="w-50" value="69"/>
+            </div>
+        </div>
+        <div class="col-9 card__content">
+            <a href="/question/{{ question.id }}">{{ question.title }}</a>
+            <p>{{ question.text }}</p>
+            <div class="content__footer">
+                <div class="answers">
+                    <a href="#">answers (3)</a>
+                </div>
+                <div class="footer__tags">
+                    <span>Tags:</span>
+
+                    {% for tag in question.tags %}
+                        <a href="/tag/{{ tag }}">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

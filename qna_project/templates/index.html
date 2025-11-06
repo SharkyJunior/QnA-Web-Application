@@ -1,0 +1,14 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+    <div class="d-flex align-items-center gap-4">
+        <h1 class="pb-3">Recent questions</h1>
+        <a href="{% url 'hot' %}">Hot questions!</a>
+    </div>
+
+    {% for question in questions %}
+        {% include 'layout/card.html' with question=question %}
+    {% endfor %}
+
+    {% include 'layout/paginator.html' with page=page %}
+{% endblock content %}
