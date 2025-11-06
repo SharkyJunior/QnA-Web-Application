@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
 
 QUESTIONS = [
     { 
@@ -24,12 +24,25 @@ ANSWERS = [
     } for i in range(1, 50)
 ]
 
+def paginate(request, obj_list, per_page=10):
+    try:
+        page_num = int(request.GET.get('page', 1))
+    except (ValueError, TypeError):
+        page_num = 1
+        
+    paginator = Paginator(obj_list, per_page)
+    
+    try:
+        page = paginator.page(page_num)
+    except PageNotAnInteger:
+        page = paginator.page(1)
+    except EmptyPage:
+        page = paginator.page(paginator.num_pages)
+    
+    return page
+
 def index(request):
-    page_num = int(request.GET.get('page', 1))
-    
-    paginator = Paginator(QUESTIONS, 10)
-    
-    page = paginator.get_page(page_num)
+    page = paginate(request, QUESTIONS)
     
     return render(request, 'index.html', context={
         'questions': page.object_list,
@@ -69,9 +82,7 @@ def tag(request, tag):
     
     page_num = int(request.GET.get('page', 1))
     
-    paginator = Paginator(filtered_q, 10)
-    
-    page = paginator.get_page(page_num)
+    page = paginate(filtered_q, page_num)
     
     return render(request, 'tag_results.html', context={
         'page': page,
