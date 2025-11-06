@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from .models import Question, Tag, Profile, Answer
 
 QUESTIONS = [
     { 
@@ -25,9 +26,10 @@ ANSWERS = [
 ]
 
 def index(request):
+    questions = Question.objects.all()
     page_num = int(request.GET.get('page', 1))
     
-    paginator = Paginator(QUESTIONS, 10)
+    paginator = Paginator(questions, 10)
     
     page = paginator.get_page(page_num)
     
