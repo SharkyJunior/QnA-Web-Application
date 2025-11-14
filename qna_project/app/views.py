@@ -1,37 +1,30 @@
 from django.shortcuts import render
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.models import User
 from .models import Question, Tag, Profile, Answer
 
-QUESTIONS = [
-    { 
-        'id': i,
-        'title': f'Title #{i}',
-        'text': 'Text',
-        'tags': [f'tag{i//2}', 
-                 (f'tag{i//2 + 1}' if i % 5 != 0 else 'python'),
-                 (f'tag{i//2 + 2}' if i % 3 != 0 else 'django')],
-    } for i in range(1, 30)
-]
 
-ANSWERS = [
-    {
-        'id': i,
-        'text': f'Answer {i}',
-        'correct': i % 3 == 2,
-        'votes': i,
-        'question': i // 2 + 1,
-        'user': 'User'
-    } for i in range(1, 50)
-]
+def paginate(request, obj_list, per_page=10):
+    try:
+        page_num = int(request.GET.get('page', 1))
+    except (ValueError, TypeError):
+        page_num = 1
+        
+    paginator = Paginator(obj_list, per_page)
+    
+    try:
+        page = paginator.page(page_num)
+    except PageNotAnInteger:
+        page = paginator.page(1)
+    except EmptyPage:
+        page = paginator.page(paginator.num_pages)
+    
+    return page
 
 def index(request):
-    questions = Question.objects.all()
-    page_num = int(request.GET.get('page', 1))
+    questions = Question.objects.recent()
     
-    paginator = Paginator(questions, 10)
-    
-    page = paginator.get_page(page_num)
+    page = paginate(request, questions)
     
     return render(request, 'index.html', context={
         'questions': page.object_list,
@@ -39,8 +32,13 @@ def index(request):
     })
     
 def hot(request):
+    questions = Question.objects.most_upvoted()
+    
+    page = paginate(request, questions)
+    
     return render(request, 'hot.html', context={
-        'questions': QUESTIONS[::-1]
+        'questions': page.object_list,
+        'page': page
     })
 
 def settings(request):

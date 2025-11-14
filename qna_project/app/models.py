@@ -1,12 +1,32 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+
 
 class QuestionManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().order_by('-created_at')
     
+    def recent(self):
+        return self.get_queryset().order_by('-created_at')
+    
     def by_tag(self, tag_name):
-        return self.get_queryset().filter(tags__name=tag_name)
+        return self.get_queryset().filter(tag__name=tag_name)
+    
+    def most_upvoted(self):
+        return (
+            self.get_queryset()
+            .annotate(
+                total_votes=Coalesce(
+                    Sum('votes__value'),
+                    Value(0)
+                )
+            )
+            .order_by('-total_votes', '-created_at')
+        )
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
@@ -26,25 +46,55 @@ class Tag(models.Model):
 class Question(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
-    user = models.ForeignKey(Profile, on_delete=models.PROTECT)
-    tag = models.ManyToManyField(Tag, blank=True)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    tags = models.ManyToManyField(Tag, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     objects = QuestionManager()
     
+    def vote_sum(self):
+        result = self.votes.aggregate(total=Sum('value'))['total']
+        return result or 0
+    
+    def answer_count(self):
+        return self.answers.count()
+    
     def __str__(self):
         return self.title
-     
-class Answer(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    text = models.TextField()
-    is_correct = models.BooleanField(default=False, null=True)
-    user = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    
+class QuestionVote(models.Model):
+    question = models.ForeignKey(Question, related_name='votes', on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    value = models.SmallIntegerField(choices=[(1, 'Upvote'), (-1, 'Downvote')])
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.text[:50]
+        return f'{self.profile} voted <{self.value}> on \"{self.question.title[:30]}...\"'
+     
+class Answer(models.Model):
+    question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
+    text = models.TextField()
+    is_correct = models.BooleanField(default=False, null=True)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.text[:50] + '...'
+    
+class AnswerVote(models.Model):
+    answer = models.ForeignKey(Answer, related_name='votes', on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    value = models.SmallIntegerField(choices=[(1, 'Upvote'), (-1, 'Downvote')])
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f'{self.profile} voted <{self.value}> on \"{self.answer.text[:30]}...\"'
+

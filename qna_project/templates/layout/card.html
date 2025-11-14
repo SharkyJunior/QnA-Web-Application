@@ -5,7 +5,7 @@
                 <img src="img.jpg" alt="card img" />
             </div>
             <div class="card__likes p-2">
-                <input type="number" class="w-50" value="69"/>
+                <input type="number" class="w-50" value="{{ question.vote_sum }}"/>
             </div>
         </div>
         <div class="col-9 card__content">
@@ -13,13 +13,13 @@
             <p>{{ question.text }}</p>
             <div class="content__footer">
                 <div class="answers">
-                    <a href="#">answers (3)</a>
+                    <a href="#">answers ({{ question.answer_count }})</a>
                 </div>
                 <div class="footer__tags">
                     <span>Tags:</span>
 
                     {% for tag in question.tags %}
-                        <a href="/tag/{{ tag }}">{{ tag }}</a>
+                        <a href="/tag/{{ tag }}">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
             </div>
