@@ -1,25 +1,29 @@
 <div class="card m-2 mt-4">
     <div class="row g-0 align-items-center">
-        <div class="col-3 card__info">
+        <div class="col-2 card__info mx-3">
             <div class="card__img p-2">
-                <img src="img.jpg" alt="card img" />
+                <img src="{{ question.profile.avatar }}" alt="card img" width="64" height="64"/>
+            </div>
+            <div class="card__username ps-2">
+                <a href="{% url 'profile' question.profile %}">{{ question.profile.nickname }}</a>
             </div>
             <div class="card__likes p-2">
                 <input type="number" class="w-50" value="{{ question.vote_sum }}"/>
             </div>
         </div>
+        <div class="vr col-1 m-3"></div>
         <div class="col-9 card__content">
             <a href="{% url 'question' question.id %}">{{ question.title }}</a>
             <p>{{ question.text }}</p>
             <div class="content__footer">
                 <div class="answers">
-                    <a href="#">answers ({{ question.answer_count }})</a>
+                    <a href="{% url 'question' question.id %}#answers">answers ({{ question.answer_count }})</a>
                 </div>
                 <div class="footer__tags">
                     <span>Tags:</span>
 
-                    {% for tag in question.tags %}
-                        <a href="{% url 'tag' tag %}">{{ tag }}</a>
+                    {% for tag in question.tags.all %}
+                        <a href="{% url 'tag' tag %}">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
             </div>

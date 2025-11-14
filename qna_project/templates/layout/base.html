@@ -18,12 +18,12 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top ">
+    <nav class="navbar navbar-expand-lg bg-white fixed-top ">
         <div class="container-fluid d-flex align-items-center justify-content-between ">
             
             <div class="d-flex align-items-center gap-2">
                 <div class="m-3 logo__img">
-                    <img src="img.jpg" alt="logo" style="height:40px;">
+                    <img src="{% static 'img/ask_pupkin_logo.svg'%}" alt="logo" style="height:40px;">
                 </div>
                 <a class="navbar-brand mb-0" href="{% url 'index' %}">
                     <h3 class="m-0">AskPupkin</h3>
@@ -53,12 +53,13 @@
 
     <main class="d-flex bg-light p-2 gap-2 pt-5 mt-5">
         <div class="row container-fluid">
-            <div class="col-8 vh-100">
+            <div class="col-1"></div>
+            <div class="col-8">
                 {% block content %}
                 {% endblock content %}
             </div>
 
-            <div class="col-4 bg-dark">
+            <div class="col-3 rounded-4 h-25" style="background-color: rgb(203, 209, 227);">
                 <section class="card m-2 mt-4 p-2 popular-tags">
                     <h4>Popular tags</h4>
                     <div class="tags">

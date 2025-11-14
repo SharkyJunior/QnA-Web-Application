@@ -56,25 +56,28 @@ def register(request):
     return render(request, 'register.html')
 
 def question(request, question_id):
+    question = Question.objects.get(id=question_id)
+    
     return render(request, 'question.html', context={
-        'question': QUESTIONS[question_id - 1],
-        'answers': [a for a in ANSWERS if a['question'] == question_id]
+        'question': question,
     })
     
 def ask(request):
     return render(request, 'ask.html')
 
 def tag(request, tag):
-    filtered_q = [q for q in QUESTIONS if tag in q['tags']]
+    questions = Question.objects.by_tag(tag)
     
-    page_num = int(request.GET.get('page', 1))
-    
-    page = paginate(filtered_q, page_num)
+    page = paginate(request, questions)
     
     return render(request, 'tag_results.html', context={
         'page': page,
-        'questions': page.object_list
+        'questions': page.object_list,
+        'tag_name': tag
     })
     
 def register(request):
     return render(request, 'register.html')
+
+def profile(request):
+    pass

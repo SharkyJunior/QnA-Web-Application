@@ -14,7 +14,7 @@ class QuestionManager(models.Manager):
         return self.get_queryset().order_by('-created_at')
     
     def by_tag(self, tag_name):
-        return self.get_queryset().filter(tag__name=tag_name)
+        return self.get_queryset().filter(tags__name=tag_name)
     
     def most_upvoted(self):
         return (
@@ -30,6 +30,28 @@ class QuestionManager(models.Manager):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
+    nickname = models.CharField(default='unnamed user', max_length=32)
+    
+    avatar_url = models.URLField(blank=True, null=True)
+    avatar_image = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
+    
+    @property
+    def avatar(self):
+        """
+        Returns the final URL to use in templates.
+        Priority:
+        1) local image if uploaded
+        2) external URL if provided
+        3) default placeholder
+        """
+        if self.avatar_image:
+            return self.avatar_image.url
+        if self.avatar_url:
+            return self.avatar_url
+        return '../static/img/avatar_default.svg'
     
     def __str__(self):
         return self.user.username
@@ -49,8 +71,8 @@ class Question(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     tags = models.ManyToManyField(Tag, blank=True)
     
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
     
     objects = QuestionManager()
     
@@ -83,6 +105,10 @@ class Answer(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def vote_sum(self):
+        result = self.votes.aggregate(total=Sum('value'))['total']
+        return result or 0
     
     def __str__(self):
         return self.text[:50] + '...'

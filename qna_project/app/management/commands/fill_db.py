@@ -48,7 +48,11 @@ class Command(BaseCommand):
                     first_name=self.fake.first_name(),
                     last_name=self.fake.last_name(),
                 )
-                Profile.objects.create(user=user)
+                Profile.objects.create(
+                    user=user,
+                    nickname=user.username,
+                    avatar_url=f"../static/img/avatar_placeholders/{random.randint(0, 6)}.svg",
+                )
         
         self.stdout.write(self.style.SUCCESS(f'Successfully created {num_profiles} users'))
         
@@ -69,7 +73,7 @@ class Command(BaseCommand):
                 
                 for _ in range(self.fake.random_int(min=1, max=5)):
                     tag = Tag.objects.order_by('?').first()
-                    question.tag.add(tag)
+                    question.tags.add(tag)
                 
         self.stdout.write(self.style.SUCCESS(f'Successfully created {num_questions} questions'))
         
