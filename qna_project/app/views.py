@@ -69,9 +69,7 @@ def tag(request, tag):
     
     page_num = int(request.GET.get('page', 1))
     
-    paginator = Paginator(filtered_q, 10)
-    
-    page = paginator.get_page(page_num)
+    page = paginate(filtered_q, page_num)
     
     return render(request, 'tag_results.html', context={
         'page': page,

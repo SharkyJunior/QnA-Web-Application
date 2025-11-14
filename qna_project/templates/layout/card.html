@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="col-9 card__content">
-            <a href="/question/{{ question.id }}">{{ question.title }}</a>
+            <a href="{% url 'question' question.id %}">{{ question.title }}</a>
             <p>{{ question.text }}</p>
             <div class="content__footer">
                 <div class="answers">
@@ -19,7 +19,7 @@
                     <span>Tags:</span>
 
                     {% for tag in question.tags %}
-                        <a href="/tag/{{ tag }}">{{ tag.name }}</a>
+                        <a href="{% url 'tag' tag %}">{{ tag }}</a>
                     {% endfor %}
                 </div>
             </div>
