@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Sum, Value
+from django.db.models import Sum, Value, Count
 from django.db.models.functions import Coalesce
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -27,6 +27,20 @@ class QuestionManager(models.Manager):
             )
             .order_by('-total_votes', '-created_at')
         )
+        
+class TagManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by('name')
+    
+    def most_popular(self):
+        return self.get_queryset().annotate(total_questions=Count('question')).order_by('-total_questions')
+    
+class ProfileManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by('user__username')
+    
+    def most_active(self):
+        return self.get_queryset().annotate(total_questions=Count('question')).order_by('-total_questions')
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
@@ -37,6 +51,8 @@ class Profile(models.Model):
     
     created_at = models.DateTimeField(null=True, auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)
+    
+    objects = ProfileManager()
     
     @property
     def avatar(self):
@@ -61,6 +77,8 @@ class Tag(models.Model):
     
     created_at = models.DateTimeField(null=True,auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)
+    
+    objects = TagManager()
     
     def __str__(self):
         return self.name
@@ -94,8 +112,11 @@ class QuestionVote(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    def __str__(self):
-        return f'{self.profile} voted <{self.value}> on \"{self.question.title[:30]}...\"'
+    class Meta:
+        unique_together = ('question', 'profile')
+    
+    def __str__(self) -> str:
+        return f"{'👍' if self.value == 1 else '👎'} {self.profile} → {self.question.title}"
      
 class Answer(models.Model):
     question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
@@ -121,6 +142,9 @@ class AnswerVote(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    def __str__(self):
-        return f'{self.profile} voted <{self.value}> on \"{self.answer.text[:30]}...\"'
+    class Meta:
+        unique_together = ('answer', 'profile')
+    
+    def __str__(self) -> str:
+        return f"{'👍' if self.value == 1 else '👎'} {self.profile} → {self.answer.text[:50]}..."
 
