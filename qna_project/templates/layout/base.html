@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-    <title>Document</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/ask_pupkin_logo.svg' %}">
+    <title>AskPupkin</title>
     <style>
         .navbar-brand {
             text-decoration: none !important;
@@ -18,12 +19,12 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top ">
+    <nav class="navbar navbar-expand-lg bg-white fixed-top ">
         <div class="container-fluid d-flex align-items-center justify-content-between ">
             
             <div class="d-flex align-items-center gap-2">
                 <div class="m-3 logo__img">
-                    <img src="img.jpg" alt="logo" style="height:40px;">
+                    <img src="{% static 'img/ask_pupkin_logo.svg'%}" alt="logo" style="height:40px;">
                 </div>
                 <a class="navbar-brand mb-0" href="{% url 'index' %}">
                     <h3 class="m-0">AskPupkin</h3>
@@ -37,7 +38,7 @@
 
             <div class="d-flex gap-2 align-items-center">
             <div class="image">
-                <img src="img.jpg" alt="user avatar" style="height:40px; width:40px; border-radius:50%;">
+                <img src="{% static 'img/avatar_default.svg'%}" alt="user avatar" style="height:40px; width:40px; border-radius:50%;">
             </div>
             <div class="content">
                 <a class="user__name fw-semibold navbar-brand" href="#">Dr.Pepper</a>
@@ -51,32 +52,29 @@
         </div>
     </nav>
 
-    <main class="d-flex bg-light p-2 gap-2 pt-5 mt-5">
+    <main class="d-flex bg-light p-2 gap-2 pt-5 mt-5 t-5">
         <div class="row container-fluid">
-            <div class="col-8 vh-100">
+            <div class="col-1"></div>
+            <div class="col-8">
                 {% block content %}
                 {% endblock content %}
             </div>
 
-            <div class="col-4 bg-dark">
+            <div class="col-3 rounded-4 h-25" style="background-color: rgb(203, 209, 227);">
                 <section class="card m-2 mt-4 p-2 popular-tags">
                     <h4>Popular tags</h4>
                     <div class="tags">
-                        <a href="{% url 'tag' 'python' %}">python</a>
-                        <a href="{% url 'tag' 'R' %}">R</a>
-                        <a href="{% url 'tag' 'django' %}">django</a>
-                        <a href="{% url 'tag' 'pytorch' %}">pytorch</a>
-                        <a href="{% url 'tag' 'blackjack' %}">blackjack</a>
+                        {% for tag in left_bar_tags %}
+                            <a href="{% url 'tag' tag.name %}">{{ tag.name }}</a>
+                        {% endfor %}
                     </div>
                 </section>
                 <section class="card m-2 p-2 best-members">
                     <h4>Best Members</h4>
                     <div class="tags">
-                        <a href="#">Mr. Pupkin</a>
-                        <a href="#">Mr. Pupkin</a>
-                        <a href="#">Mr. Pupkin</a>
-                        <a href="#">Mr. Pupkin</a>
-                        <a href="#">Mr. Pupkin</a>
+                        {% for profile in left_bar_profiles %}
+                            <a href="{% url 'profile' profile.nickname  %}">{{ profile.nickname }}</a>
+                        {% endfor %}
                     </div>
                 </section>
             </div>

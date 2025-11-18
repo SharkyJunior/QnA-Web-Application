@@ -1,7 +1,8 @@
 # folders
 qna_venv
 __pycache__
-secrets
+config
+Postgres
 
 # files
 db.sqlite3

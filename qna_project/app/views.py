@@ -1,28 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import HttpResponseNotFound
+from django.contrib.auth.models import User
+from .models import Question, Tag, Profile, Answer
 
-QUESTIONS = [
-    { 
-        'id': i,
-        'title': f'Title #{i}',
-        'text': 'Text',
-        'tags': [f'tag{i//2}', 
-                 (f'tag{i//2 + 1}' if i % 5 != 0 else 'python'),
-                 (f'tag{i//2 + 2}' if i % 3 != 0 else 'django')],
-    } for i in range(1, 30)
-]
-
-ANSWERS = [
-    {
-        'id': i,
-        'text': f'Answer {i}',
-        'correct': i % 3 == 2,
-        'votes': i,
-        'question': i // 2 + 1,
-        'user': 'User'
-    } for i in range(1, 50)
-]
 
 def paginate(request, obj_list, per_page=10):
     try:
@@ -41,17 +22,35 @@ def paginate(request, obj_list, per_page=10):
     
     return page
 
+def left_bar_data():
+    return Tag.objects.most_popular()[:7], Profile.objects.most_active()[:7]
+
 def index(request):
-    page = paginate(request, QUESTIONS)
+    left_bar_tags, left_bar_profiles = left_bar_data()
+    
+    questions = Question.objects.recent()
+    
+    page = paginate(request, questions)
     
     return render(request, 'index.html', context={
         'questions': page.object_list,
-        'page': page
+        'page': page,
+        'left_bar_tags': left_bar_tags,
+        'left_bar_profiles': left_bar_profiles 
     })
     
 def hot(request):
+    left_bar_tags, left_bar_profiles = left_bar_data()
+    
+    questions = Question.objects.most_upvoted()
+    
+    page = paginate(request, questions)
+    
     return render(request, 'hot.html', context={
-        'questions': QUESTIONS[::-1]
+        'questions': page.object_list,
+        'page': page,
+        'left_bar_tags': left_bar_tags,
+        'left_bar_profiles': left_bar_profiles 
     })
 
 def settings(request):
@@ -59,35 +58,45 @@ def settings(request):
 
 def login(request):
     return render(request, 'login.html')
-
-def tag(request, tag):
-    return render(request, 'tag_results.html', context={
-        'tag': tag
-    })
     
 def register(request):
     return render(request, 'register.html')
 
 def question(request, question_id):
+    try:
+        question = Question.objects.get(id=question_id)
+    except Question.DoesNotExist:
+        return HttpResponseNotFound('<h1>Question not found</h1>')
+    
     return render(request, 'question.html', context={
-        'question': QUESTIONS[question_id - 1],
-        'answers': [a for a in ANSWERS if a['question'] == question_id]
+        'question': question,
     })
     
 def ask(request):
     return render(request, 'ask.html')
 
 def tag(request, tag):
-    filtered_q = [q for q in QUESTIONS if tag in q['tags']]
+    left_bar_tags, left_bar_profiles = left_bar_data()
     
-    page_num = int(request.GET.get('page', 1))
+    try:
+        tag = Tag.objects.get(name=tag)
+    except Tag.DoesNotExist:
+        return HttpResponseNotFound('<h1>Tag not found</h1>')
     
-    page = paginate(filtered_q, page_num)
+    questions = Question.objects.by_tag(tag)
+    
+    page = paginate(request, questions)
     
     return render(request, 'tag_results.html', context={
         'page': page,
-        'questions': page.object_list
+        'questions': page.object_list,
+        'tag_name': tag,
+        'left_bar_tags': left_bar_tags,
+        'left_bar_profiles': left_bar_profiles 
     })
     
 def register(request):
     return render(request, 'register.html')
+
+def profile(request):
+    pass
