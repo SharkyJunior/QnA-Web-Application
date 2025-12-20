@@ -4,15 +4,13 @@
     <div class="row g-0 align-items-center my-2">
         <div class="col-2 card__info mx-3">
             <div class="card__img p-2">
-                <img src="{{ question.profile.avatar }}" alt="card img" width="64" height="64"/>
+                <img src="{{ question.profile.avatar }}" alt="card img" style="height:64px; width:64px; border-radius:50%;"/>
             </div>
             <div class="card__username ps-2">
                 <a href="{% url 'profile' question.profile %}">{{ question.profile.nickname }}</a>
             </div>
             <span class="small text-muted ps-2">{{ question.created_at|naturaltime }}</span>
-            <div class="card__likes p-2">
-                <input type="number" class="w-50" value="{{ question.vote_sum }}"/>
-            </div>
+            {% include 'layout/votes.html' with object_with_votes=question %}
         </div>
         <div class="vr col-1 m-3"></div>
         <div class="col-9 card__content">

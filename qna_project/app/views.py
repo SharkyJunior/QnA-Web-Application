@@ -71,7 +71,8 @@ def index(request):
         'query': query,
         'left_bar_tags': left_bar_tags,
         'left_bar_profiles': left_bar_profiles,
-        'search': True
+        'search': True,
+        'question_count': results.count()
     }) 
     
 def hot(request):
@@ -101,6 +102,9 @@ def question(request, question_id):
     profile = get_profile(request)
     
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect('login')
+        
         form = NewAnswerForm(request.POST)
         
         if form.is_valid():
@@ -158,7 +162,8 @@ def tag(request, tag):
         'questions': page.object_list,
         'tag_name': tag,
         'left_bar_tags': left_bar_tags,
-        'left_bar_profiles': left_bar_profiles 
+        'left_bar_profiles': left_bar_profiles,
+        'question_count': questions.count()
     })
 
 def profile(request):

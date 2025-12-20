@@ -206,6 +206,7 @@ class EditProfileForm(forms.ModelForm):
     
     def save(self, commit=True):
         profile = super().save(commit=False)
+        profile.save()
         
         profile.user.username = self.cleaned_data['username']
         profile.user.email = self.cleaned_data['email']

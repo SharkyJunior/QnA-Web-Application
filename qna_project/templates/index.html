@@ -2,17 +2,20 @@
 
 {% block content %}
     <div class="d-flex align-items-center gap-4 m-4">
-        {% if search %}
-            <h1 class="pb-3">Search results: {{ query }}</h1>
-        {% else %}
-            <h1 class="pb-3">Recent questions</h1>
-        {% endif %}
-        <a href="{% url 'hot' %}">Hot questions!</a>
+        <div class="d-flex flex-column">
+            {% if search %}
+                <h1 class="">Search results: {{ query }}</h1>
+                <small class="text-muted">{{ question_count }} results</small>
+            {% else %}
+                <h1 class="pb-3">Recent questions</h1>
+            {% endif %}
+        </div>
+        <a class="position-relative top-0 pb-4 mx-3" href="{% url 'hot' %}">Hot questions!</a>
     </div>
 
     {% for question in questions %}
         {% include 'layout/card.html' with question=question %}
     {% endfor %}
 
-    {% include 'layout/paginator.html' with page=page %}
+    {% include 'layout/paginator.html' with page=page query=query%}
 {% endblock content %}

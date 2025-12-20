@@ -73,7 +73,7 @@ class Profile(models.Model):
         return self.user.username
 
 class Tag(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=50, unique=True)
     
     created_at = models.DateTimeField(null=True,auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)

@@ -85,7 +85,10 @@ class Command(BaseCommand):
             t = p.add_task("", total=num_tags)
             while not p.finished:
                 p.update(t, advance=1)
-                Tag.objects.create(name=self.fake.word())
+                try:
+                    Tag.objects.create(name=self.fake.word())
+                except Exception as e:
+                    continue
             
         self.stdout.write(self.style.SUCCESS(f'Successfully created {num_tags} tags'))
         
@@ -115,19 +118,22 @@ class Command(BaseCommand):
             t = p.add_task("", total=num_votes)
             while not p.finished:
                 p.update(t, advance=2)
-                profile = Profile.objects.order_by('?').first()
-                question = Question.objects.order_by('?').first()
-                answer = Answer.objects.order_by('?').first()
-                vote = QuestionVote.objects.create(
-                    question=question,
-                    profile=profile,
-                    value=random.choice([-1, 1]),
-                )
-                vote = AnswerVote.objects.create(
-                    answer=answer,
-                    profile=profile,
-                    value=random.choice([-1, 1]),
-                )
+                try:
+                    profile = Profile.objects.order_by('?').first()
+                    question = Question.objects.order_by('?').first()
+                    answer = Answer.objects.order_by('?').first()
+                    vote = QuestionVote.objects.create(
+                        question=question,
+                        profile=profile,
+                        value=random.choice([-1, 1]),
+                    )
+                    vote = AnswerVote.objects.create(
+                        answer=answer,
+                        profile=profile,
+                        value=random.choice([-1, 1]),
+                    )
+                except Exception as e:
+                    continue
             
         self.stdout.write(self.style.SUCCESS(f'Successfully created {num_votes} votes'))
             
