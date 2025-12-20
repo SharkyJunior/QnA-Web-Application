@@ -3,6 +3,7 @@ qna_venv
 __pycache__
 config
 Postgres
+media
 
 # files
 db.sqlite3

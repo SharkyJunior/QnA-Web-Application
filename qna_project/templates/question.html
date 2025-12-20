@@ -1,12 +1,24 @@
 {% extends 'layout/base.html' %}
 {% load humanize %}
 
+<style>
+.vote-btn {
+    width: 20px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+</style>
+
 {% block content %}
 <div class=" m-2 mt-4">
     <div class="row g-0 align-items-center">
         <div class="col-2 card__info m-2">
             <div class="card__img p-2">
-                <img src="{{ question.profile.avatar }}" alt="user img" height="64" width="64"/>
+                <img src="{{ question.profile.avatar }}" alt="user img" style="height:64px; width:64px; border-radius:50%;"/>
             </div>
             <div class="card__username ps-2">
                 <a href="{% url 'profile' question.profile %}">{{ question.profile.nickname }}</a>
@@ -45,40 +57,59 @@
 {% for answer in question.answers.all %}
 <div class="card m-2 mt-4">
     <div class="row g-0 align-items-center">
-        <div class="col-2 card__info m-3">
-            <div class="card__img p-2">
-                <img src="{{ answer.profile.avatar }}" alt="user img" height="64" width="64"/>
+        <div class="col-1 card__info m-3 d-flex flex-column">
+            <div class="mx-2 d-flex flex-column align-items-center">
+                <div class="card__img m-2">
+                    <img src="{{ answer.profile.avatar }}" alt="user img" style="height:52px; width:52px; border-radius:50%;"/>
+                </div>
+                <div class="card__username">
+                    <a href="{% url 'profile' question.profile %}">{{ answer.profile.nickname }}</a>
+                </div>
             </div>
-            <div class="card__username ps-2">
-                <a href="{% url 'profile' question.profile %}">{{ answer.profile.nickname }}</a>
-            </div>
-            <div class="card__likes p-2">
-                <input type="number" class="w-50" value="{{ answer.vote_sum }}"/>
+            <div class="card__likes p-2 d-flex align-items-center">
+                <div class="d-flex flex-column">
+                    <button class="btn btn-success btn-sm me-1 m-1" style="width: 24px; padding: 2px;">▲</button>
+                    <button class="btn btn-danger btn-sm mx-1" style="width: 24px; padding: 2px;">▼</button>
+                </div>
+                <span class="d-flex align-items-center justify-content-center px-3 py-2" 
+                    style="min-width: 40px; font-size: 1.1rem;">
+                    {{ answer.vote_sum }}
+                </span>
             </div>
         </div>
         <div class="vr col-1 m-3"></div>
-        <div class="col-9 p-1 card__content">
-            <p>{{ answer.text }}</p>
-            <div class="content__footer">
-                <div class="correct_tick">
+        <div class="col-9 p-1 card__content d-flex flex-column">
+            <p class="position-absolute top-0 mt-4">{{ answer.text }}</p>
+            <div class="content__footer position-absolute bottom-0 my-2">
+                <div class="correct_tick my-2">
                     <input type="checkbox" id="checkbox{{ answer.id }}" name="checkbox1" {% if answer.is_correct %}checked{% endif %}/>
                     <label for="checkbox{{ answer.id }}">Correct!</label>
                 </div>
+                <div class="mt-auto">
+                    <small>Created </small><small class="text-muted">{{ answer.created_at|naturaltime }}</small>
+                </div>
             </div>
+            
         </div>
     </div>
 </div>
 {% endfor %}
 
+{% if not answers.is_empty %}
 <hr class="my-4">
+{% endif %}
 
-<div>
-    <div>
-        <textarea class="form-control" rows="5" placeholder="Enter your answer here..."></textarea>
+{% include 'layout/form_errors.html' with form=form %}
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="form p-1 d-flex gap-2 align-items-center">
+        {{ form.text }}
     </div>
+
     <div class="d-flex gap-2 p-1 pt-3">
-        <button class="btn btn-primary" type="submit">Answer</button>
+        <button class="btn btn-primary mx-3" type="submit">Answer</button>
     </div>
-</div>
+</form>
 
 {% endblock content %}

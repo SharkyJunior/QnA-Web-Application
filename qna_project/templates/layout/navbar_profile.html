@@ -1,0 +1,31 @@
+<style>
+    .navbar-avatar{
+    border: 1px solid #007bff;
+    
+    border-radius: 50%;
+    
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<div class="d-flex gap-2 align-items-center">
+    {% if user.is_authenticated %}
+    <div class="image">
+        <img class="navbar-avatar" src="{{ profile.avatar }}?v={{ profile.id }}{% now 'U' %}" alt="user avatar" style="height:40px; width:40px; border-radius:50%;">
+    </div>
+    <div class="mx-2 content">
+        <a class="user__name fw-semibold navbar-brand" href="#">{{ profile.nickname }}</a>
+        <div class="user__links small">
+        <a href="{% url 'edit_profile' %}" class="me-2">Edit profile</a>
+        <a href="{% url 'logout' %}?next={{ request.path }}">Logout</a>
+        </div>
+    </div>
+    {% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+    {% endif %}
+</div>

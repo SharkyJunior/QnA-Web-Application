@@ -1,0 +1,6 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<h1 class="pb-3 pt-3">Edit profile</h1>
+{% include 'layout/edit_profile_form.html' with profile=profile form=form%}
+{% endblock content %}

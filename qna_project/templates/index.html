@@ -2,7 +2,11 @@
 
 {% block content %}
     <div class="d-flex align-items-center gap-4 m-4">
-        <h1 class="pb-3">Recent questions</h1>
+        {% if search %}
+            <h1 class="pb-3">Search results: {{ query }}</h1>
+        {% else %}
+            <h1 class="pb-3">Recent questions</h1>
+        {% endif %}
         <a href="{% url 'hot' %}">Hot questions!</a>
     </div>
 

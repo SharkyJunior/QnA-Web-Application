@@ -3,50 +3,49 @@
 {% block content %}
 <h1 class="pb-3">Register</h1>
 
-<h6 class="text-danger">Sorry, this email address is already used!</h6>
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include 'layout/form_errors.html' with form=form %}
 
-<form action="{% url 'index' %}">
     <div class="form p-1 mt-3 d-flex gap-2 align-items-center">
-        <p class="pt-2 col-3">Login:</p>
-        <input type="text" class="form-control" value="dr_pepper" placeholder="Enter new login..." />
+        <p class="pt-2 col-2" for="{{ form.username.id_for_label }}">{{ form.username.label }}:</p>
+        {{ form.username }}
     </div>
 
     <div class="form p-1 d-flex gap-2 align-items-center">
-        <p class="pt-2 col-3">Email:</p>
-        <input type="email" class="form-control" value="dr.pepper@mail.ru" placeholder="Enter new email..." />
+        <p class="pt-2 col-2" for="{{ form.email.id_for_label}}">{{ form.email.label }}:</p>
+        {{ form.email }}
     </div>
 
     <div class="form p-1 d-flex gap-2 align-items-center">
-        <p class="pt-2 col-3">Nickname:</p>
-        <input type="text" class="form-control" value="Dr.Pepper" placeholder="Enter new nickname..." />
-    </div>
-
-    <hr class="my-3">
-
-    <div class="form p-1 d-flex gap-2 align-items-center">
-        <p class="pt-2 col-3">Password:</p>
-        <input type="password" class="form-control" value="dr.pepper@mail.ru" placeholder="Enter new email..." />
-    </div>
-
-    <div class="form p-1 d-flex gap-2 align-items-center">
-        <p class="pt-2 col-3">Repeat password:</p>
-        <input type="password" class="form-control" value="dr.pepper@mail.ru" placeholder="Enter new email..." />
+        <p class="pt-2 col-2" for="{{ form.nickname.id_for_label }}">{{ form.nickname.label }}:</p>
+        {{ form.nickname }}
     </div>
 
     <hr class="my-3">
 
     <div class="form p-1 d-flex gap-2 align-items-center">
-        <p class="pt-2 col-3">Avatar:</p>
-        <div class="">
-            <div class="d-flex gap-2">
-                <input type="text" class="form-control" value="C:\avatar.jpg" placeholder="Enter new avatar..." />
-                <button class="btn btn-secondary">Upload</button>
-            </div>
-        </div>
+        <p class="pt-2 col-2" for="{{ form.password.id_for_label }}">{{ form.password.label }}:</p>
+        {{ form.password }}
+    </div>
+
+    <div class="form p-1 d-flex gap-2 align-items-center">
+        <p class="pt-2 col-2" for="{{ form.password2.id_for_label }}">{{ form.password2.label }}:</p>
+        {{ form.password2 }}    
+    </div>
+
+    <hr class="my-3">
+
+    <div class="form-group gap-2 p-1 d-flex align-items-center">
+        <p class="pt-2 col-2" for="{{ form.avatar.id_for_label }}">{{ form.avatar.label }}:</p>
+        {{ form.avatar }} 
+        <small class="form-text text-muted">
+            JPG, PNG, GIF supported. Maximum size: 5MB.
+        </small>
     </div>
 
     <div class="d-flex gap-2 p-2 mt-3">
-        <div class="col-3"></div>
+        <div class="col-2"></div>
         <button class="btn btn-primary" type="submit">Register</button>
     </div>
 </form>

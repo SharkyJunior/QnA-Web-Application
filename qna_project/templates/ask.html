@@ -3,23 +3,28 @@
 {% block content %}
 <h1 class="pb-4">New question</h1>
 
-<div class="form p-1 d-flex gap-2 align-items-center">
-    <p class="pt-2 col-2">Title:</p>
-    <input type="text" class="form-control" value="How to build a moon park?" placeholder="Ask a question..." />
-</div>
+<form method="POST">
+    {% csrf_token %}
+    {% include 'layout/form_errors.html' with form=form %}
+    
+    <div class="form p-1 d-flex gap-2 align-items-center">
+        <p class="pt-2 col-2" for="{{ form.title.id_for_label }}">{{ form.title.label }}:</p>
+        {{ form.title }}
+    </div>
 
-<div class="p-1 pt-3 d-flex gap-2 align-items-start">
-    <p class="col-2 pt-2">Text:</p>
-    <textarea class="form-control" rows="5" placeholder="Text...">Really how? I don't know</textarea>
-</div>
+    <div class="p-1 pt-3 d-flex gap-2 align-items-start">
+        <p class="pt-2 col-2" for="{{ form.text.id_for_label }}">{{ form.text.label }}:</p>
+        {{ form.text }}
+    </div>
 
-<div class="p-1 pt-3 d-flex gap-2 align-items-center">
-    <p class="pt-2 col-2">Tags:</p>
-    <input type="text" class="form-control" value="moon, park, puzzle" placeholder="Tags..." />
-</div>
+    <div class="p-1 pt-3 d-flex gap-2 align-items-center">
+        <p class="pt-2 col-2" for="{{ form.tags.id_for_label }}">{{ form.tags.label }}:</p>
+        {{ form.tags }}
+    </div>
 
-<div class="d-flex gap-2 p-3">
-    <div class="col-2"></div>
-    <button class="btn btn-primary" type="submit">Ask!</button>
-</div>
+    <div class="d-flex gap-2 p-3">
+        <div class="col-2"></div>
+        <button class="btn btn-primary" type="submit">Ask!</button>
+    </div>
+</form>
 {% endblock content %}
