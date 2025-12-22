@@ -10,10 +10,10 @@
                 <a href="{% url 'profile' question.profile %}">{{ question.profile.nickname }}</a>
             </div>
             <span class="small text-muted ps-2">{{ question.created_at|naturaltime }}</span>
-            {% include 'layout/votes.html' with object_with_votes=question %}
+            {% include 'layout/votes.html' with object_with_votes=question%}
         </div>
         <div class="vr col-1 m-3"></div>
-        <div class="col-9 card__content">
+        <div class="col-6 card__content">
             <a href="{% url 'question' question.id %}">{{ question.title }}</a>
             <p>{{ question.text }}</p>
             <div class="content__footer">

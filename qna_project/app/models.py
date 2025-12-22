@@ -94,6 +94,7 @@ class Question(models.Model):
     
     objects = QuestionManager()
     
+    @property
     def vote_sum(self):
         result = self.votes.aggregate(total=Sum('value'))['total']
         return result or 0
@@ -127,6 +128,7 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    @property
     def vote_sum(self):
         result = self.votes.aggregate(total=Sum('value'))['total']
         return result or 0

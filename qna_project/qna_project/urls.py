@@ -32,6 +32,8 @@ urlpatterns = [
     path('tag/<str:tag>', views.tag, name='tag'),
     path('profile/<str:username>', views.profile, name='profile'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('api/vote/', views.vote, name='vote'),
+    path('api/accept_answer/<int:answer_id>/', views.answer_accept, name='answer_accept'),
 ]
 
 if settings.DEBUG:

@@ -7,7 +7,7 @@
     </div>
 
     {% for question in questions %}
-        {% include 'layout/card.html' with question=question %}
+        {% include 'layout/card.html' with question=question object_type='question' %}
     {% endfor %}
 
     {% include 'layout/paginator.html' with page=page %}

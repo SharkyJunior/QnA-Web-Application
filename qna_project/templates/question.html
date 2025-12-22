@@ -24,7 +24,7 @@
                 <a href="{% url 'profile' question.profile %}">{{ question.profile.nickname }}</a>
             </div>
             <div class="card__likes p-2">
-                <input type="number" class="w-50" value="{{ question.vote_sum }}"/>
+                {% include 'layout/votes.html' with object_with_votes=question object_type='question' %}
             </div>
         </div>
         <div class="col-9 card__content">
@@ -54,37 +54,7 @@
 
 <hr class="my-4">
 
-{% for answer in question.answers.all %}
-<div class="card m-2 mt-4">
-    <div class="row g-0 align-items-center">
-        <div class="col-1 card__info m-3 d-flex flex-column">
-            <div class="mx-2 d-flex flex-column align-items-center">
-                <div class="card__img m-2">
-                    <img src="{{ answer.profile.avatar }}" alt="user img" style="height:52px; width:52px; border-radius:50%;"/>
-                </div>
-                <div class="card__username">
-                    <a href="{% url 'profile' question.profile %}">{{ answer.profile.nickname }}</a>
-                </div>
-            </div>
-            {% include 'layout/votes.html' with object_with_votes=answer %}
-        </div>
-        <div class="vr col-1 m-3"></div>
-        <div class="col-9 p-1 card__content d-flex flex-column">
-            <p class="position-absolute top-0 mt-4">{{ answer.text }}</p>
-            <div class="content__footer position-absolute bottom-0 my-2">
-                <div class="correct_tick my-2">
-                    <input type="checkbox" id="checkbox{{ answer.id }}" name="checkbox1" {% if answer.is_correct %}checked{% endif %}/>
-                    <label for="checkbox{{ answer.id }}">Correct!</label>
-                </div>
-                <div class="mt-auto">
-                    <small>Created </small><small class="text-muted">{{ answer.created_at|naturaltime }}</small>
-                </div>
-            </div>
-            
-        </div>
-    </div>
-</div>
-{% endfor %}
+{% include 'layout/question_answers.html' with question=question %}
 
 {% if not answers.is_empty %}
 <hr class="my-4">
