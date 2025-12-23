@@ -1,4 +1,3 @@
-# folders
 qna_venv
 __pycache__
 config
@@ -6,6 +5,4 @@ Postgres
 media
 /static
 
-# files
-db.sqlite3
-.env
+*.pyc

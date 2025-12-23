@@ -1,0 +1,50 @@
+services:
+  web:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    volumes:
+      - ./ask_sharkevich/staticfiles:/ask_sharkevich/staticfiles 
+      - ./ask_sharkevich/media:/ask_sharkevich/media 
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - default_1
+  db:
+    image: postgres:15-alpine
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - default_1
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./ask_sharkevich/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ask_sharkevich/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ask_sharkevich/static:/ask_sharkevich/staticfiles:ro
+      - ./ask_sharkevich/media:/ask_sharkevich/media:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    networks:
+      - default_1
+
+volumes:
+  postgres_data:
+
+networks:
+  default_1:
+    driver: bridge
