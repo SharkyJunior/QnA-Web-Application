@@ -1,0 +1,7 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<h1 class="pb-3 pt-3">{{ profile.nickname }}</h1>
+<img class="avatar-with-border mx-4 mb-3" src="{{ profile.avatar }}" alt="user avatar" style="height:100px; width:100px; border-radius:50%;">
+
+{% endblock content %}

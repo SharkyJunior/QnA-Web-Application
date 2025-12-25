@@ -1,8 +1,21 @@
 qna_venv
-__pycache__
 config
 Postgres
 media
 /static
 
+.git
+.gitignore
+__pycache__
 *.pyc
+node_modules
+*.log
+.env
+*.env
+*.md
+test/
+tests/
+.DS_Store
+.dockerignore
+Dockerfile*
+docker-compose*

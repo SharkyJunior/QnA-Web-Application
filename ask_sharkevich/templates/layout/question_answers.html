@@ -8,10 +8,12 @@
         <div class="col-1 card__info m-3 d-flex flex-column">
             <div class="mx-2 d-flex flex-column align-items-center">
                 <div class="card__img m-2">
-                    <img src="{{ answer.profile.avatar }}" alt="user img" style="height:52px; width:52px; border-radius:50%;"/>
+                    <a href="{% url 'profile' answer.profile %}">
+                        <img src="{{ answer.profile.avatar }}" alt="user img" style="height:52px; width:52px; border-radius:50%;"/>
+                    </a>
                 </div>
                 <div class="card__username">
-                    <a href="{% url 'profile' question.profile %}">{{ answer.profile.nickname }}</a>
+                    <a href="{% url 'profile' answer.profile %}">{{ answer.profile.nickname }}</a>
                 </div>
             </div>
             {% include 'layout/votes.html' with object_with_votes=answer object_type='answer' %}

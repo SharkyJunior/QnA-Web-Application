@@ -258,8 +258,19 @@ def tag(request, tag):
         'question_count': questions.count()
     })
 
-def profile(request):
-  pass
+def profile(request, username):
+    left_bar_tags, left_bar_profiles = left_bar_data()
+    
+    try:
+        profile = Profile.objects.get(user__username=username)
+    except Profile.DoesNotExist:
+        return HttpResponseNotFound('<h1>Profile not found</h1>')
+    
+    return render(request, 'profile.html', context={
+        'profile': profile,
+        'left_bar_tags': left_bar_tags,
+        'left_bar_profiles': left_bar_profiles
+    })
 
 @login_required(login_url='login')
 def edit_profile(request):

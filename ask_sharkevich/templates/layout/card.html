@@ -4,7 +4,9 @@
     <div class="row g-0 align-items-center my-2">
         <div class="col-2 card__info mx-3">
             <div class="card__img p-2">
-                <img src="{{ question.profile.avatar }}" alt="card img" style="height:64px; width:64px; border-radius:50%;"/>
+                <a href="{% url 'profile' question.profile %}">
+                    <img src="{{ question.profile.avatar }}" alt="card img" style="height:64px; width:64px; border-radius:50%;"/>
+                </a>
             </div>
             <div class="card__username ps-2">
                 <a href="{% url 'profile' question.profile %}">{{ question.profile.nickname }}</a>
